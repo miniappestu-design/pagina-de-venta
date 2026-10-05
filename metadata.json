@@ -1,0 +1,6 @@
+{
+  "name": "La Fábrica de MiniApps Verse",
+  "description": "Descubre qué tipo de MiniApp interactiva puedes crear con lo que ya tienes utilizando Inteligencia Artificial.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
