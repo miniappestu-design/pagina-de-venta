@@ -2,7 +2,7 @@ import React from 'react';
 import { Sparkles, ArrowRight, RotateCcw } from 'lucide-react';
 
 interface HeaderNavProps {
-  currentPage: 'quiz' | 'video' | 'landing';
+  currentPage: 'quiz' | 'landing';
   onCtaClick: () => void;
   onGoToQuiz: () => void;
 }
@@ -27,58 +27,47 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
           </span>
         </div>
 
-        {/* Zone 2: Navigation Links (only shown on landing page) */}
+        {/* Zone 2: Navigation Links */}
         {currentPage === 'landing' ? (
           <nav className="hidden md:flex items-center gap-5 text-xs lg:text-sm font-medium text-slate-300">
+            <a href="#seccion-post-quiz" className="hover:text-cyan-300 transition-colors">Video</a>
             <a href="#creador-demo" className="hover:text-cyan-300 transition-colors">Creador Demo</a>
-            <a href="#demostracion" className="hover:text-cyan-300 transition-colors">MiniApps</a>
+            <a href="#demostracion" className="hover:text-cyan-300 transition-colors">NutriFácil</a>
             <a href="#metodo-mapa" className="hover:text-cyan-300 transition-colors">Método M.A.P.A.</a>
             <a href="#bonos" className="hover:text-cyan-300 transition-colors">Bonos</a>
             <a href="#oferta" className="hover:text-cyan-300 transition-colors">Oferta</a>
             <a href="#faq" className="hover:text-cyan-300 transition-colors">Preguntas</a>
           </nav>
-        ) : currentPage === 'video' ? (
-          <div className="text-xs text-cyan-300/90 font-medium hidden sm:flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-            <span>Paso 2: Video de Revelación (53 segundos)</span>
-          </div>
         ) : (
           <div className="text-xs text-purple-300/80 font-medium hidden sm:block">
-            Diagnóstico de Oportunidad con Inteligencia Artificial
+            Diagnóstico Interactivo con Inteligencia Artificial
           </div>
         )}
 
         {/* Zone 3: Primary Action */}
         <div className="flex items-center gap-2">
-          {currentPage === 'landing' && (
-            <button
-              onClick={onGoToQuiz}
-              className="hidden sm:inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-white rounded-lg hover:bg-white/5 transition-colors cursor-pointer"
-              title="Volver a responder el quiz"
-            >
-              <RotateCcw className="w-3.5 h-3.5 text-purple-400" />
-              <span>Repetir Quiz</span>
-            </button>
-          )}
-
           {currentPage === 'landing' ? (
-            <button
-              onClick={onCtaClick}
-              className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold rounded-lg bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 text-white shadow-sm shadow-purple-600/30 active:scale-95 transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer"
-            >
-              <span>Acceso US$27</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          ) : currentPage === 'video' ? (
-            <button
-              onClick={onGoToQuiz}
-              className="text-xs px-2.5 py-1 rounded-full bg-purple-950/60 border border-purple-800/40 text-purple-300 hover:text-white transition-colors cursor-pointer"
-            >
-              Modificar Quiz
-            </button>
+            <>
+              <button
+                onClick={onGoToQuiz}
+                className="hidden sm:inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-white rounded-lg hover:bg-white/5 transition-colors cursor-pointer"
+                title="Volver a responder las 5 preguntas del quiz"
+              >
+                <RotateCcw className="w-3.5 h-3.5 text-purple-400" />
+                <span>Repetir Quiz</span>
+              </button>
+
+              <button
+                onClick={onCtaClick}
+                className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold rounded-lg bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 text-white shadow-sm shadow-purple-600/30 active:scale-95 transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer"
+              >
+                <span>Acceso US$27</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </>
           ) : (
-            <div className="text-xs px-2.5 py-1 rounded-full bg-purple-950/60 border border-purple-800/40 text-purple-300 font-semibold">
-              Paso 1 de 2
+            <div className="text-xs px-3 py-1 rounded-full bg-purple-950/60 border border-purple-800/40 text-purple-300 font-semibold">
+              Quiz Interactivo
             </div>
           )}
         </div>

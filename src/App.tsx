@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { QuizAnswers } from './types';
 import { HeaderNav } from './components/HeaderNav';
 import { QuizExperience } from './components/QuizExperience';
-import { PostQuizVideoSection } from './components/PostQuizVideoSection';
+import { PostQuizSection } from './components/PostQuizSection';
 import { LandingHeroPersonalized } from './components/LandingHeroPersonalized';
 import { CreadorMiniAppsDemo } from './components/CreadorMiniAppsDemo';
 import { NutriFacilInteractiveDemo } from './components/NutriFacilInteractiveDemo';
@@ -22,7 +22,7 @@ const DEFAULT_HOTMART_LINK = 'https://pay.hotmart.com/T106939828K?checkoutMode=1
 const DEFAULT_WHATSAPP_LINK = 'https://wa.me/56932051719';
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<'quiz' | 'video' | 'landing'>('quiz');
+  const [currentPage, setCurrentPage] = useState<'quiz' | 'landing'>('quiz');
 
   const [answers, setAnswers] = useState<QuizAnswers | null>(() => {
     try {
@@ -72,6 +72,8 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [currentPage]);
 
+  // Al completar la 5ta pregunta del Quiz, pasa DIRECTAMENTE a la experiencia completa
+  // encabezada por la Sección Post-Quiz con el Video (~53s) y seguida de la Landing intacta
   const handleCompleteQuiz = (newAnswers: QuizAnswers) => {
     setAnswers(newAnswers);
     try {
@@ -79,7 +81,7 @@ export default function App() {
     } catch {
       // Ignore
     }
-    setCurrentPage('video');
+    setCurrentPage('landing');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -139,30 +141,28 @@ export default function App() {
       <main className="flex-1">
         {currentPage === 'quiz' ? (
           /* ========================================================
-             PASO 1: QUIZ INTERACTIVO EXCLUSIVO (5 Preguntas)
+             PASO 1: QUIZ INTERACTIVO (5 Preguntas intactas)
+             Al responder la 5ta pregunta -> Transición inmediata
              ======================================================== */
           <QuizExperience 
             onCompleteQuiz={handleCompleteQuiz}
             onGoToLanding={handleGoToLanding}
             savedAnswers={answers}
           />
-        ) : currentPage === 'video' ? (
-          /* ========================================================
-             PASO 2: VIDEO POST-QUIZ (53s) - PUENTE ESTRATÉGICO
-             "ANUNCIO → QUIZ → VIDEO → PÁGINA DE VENTA → HOTMART"
-             ======================================================== */
-          <PostQuizVideoSection 
-            answers={answers}
-            onContinueToLanding={() => handleGoToLanding(answers || undefined)}
-            onRetakeQuiz={handleGoToQuiz}
-          />
         ) : (
           /* ========================================================
-             PASO 3: PÁGINA DE VENTA COMPLETA
-             (Todos los elementos intactos: Demo, NutriFácil, Galería,
-              Ecosistema, MAPA, Bonos, Testimonios, US$27 y Checkout)
+             PASO 2: EXPERIENCIA CONTINUA Y UNIFICADA
+             SECCIÓN POST-QUIZ + VIDEO (53s) 
+             SEGUIDA INMEDIATAMENTE POR LA LANDING DE VENTA EXISTENTE
+             (Demo, NutriFácil, Galería, Ecosistema, M.A.P.A., Bonos, Testimonios, US$27)
              ======================================================== */
           <div className="animate-in fade-in duration-300 pb-16 md:pb-0">
+            {/* SECCIÓN POST-QUIZ CON ENCABEZADO OFICIAL + VIDEO 53s INTEGRADO */}
+            <PostQuizSection 
+              answers={answers}
+              onRetakeQuiz={handleGoToQuiz}
+            />
+
             {/* Inicio personalizado: POR LO QUE NOS CONTASTE... + EL PROBLEMA + LA NUEVA OPORTUNIDAD */}
             <LandingHeroPersonalized 
               answers={answers}
@@ -202,7 +202,7 @@ export default function App() {
               whatsappLink={whatsappLink}
             />
 
-            {/* SECCIÓN: TESTIMONIOS REALES (Conversaciones de WhatsApp enviadas por el usuario) */}
+            {/* SECCIÓN: TESTIMONIOS REALES (Conversaciones reales de WhatsApp enviadas por el usuario) */}
             <RealWhatsAppTestimonials />
 
             {/* SECCIÓN: OBJECIONES (¿Y si estás pensando...?) */}
@@ -226,7 +226,7 @@ export default function App() {
       {/* Footer */}
       <Footer />
 
-      {/* Mobile Sticky CTA (Only on landing page) */}
+      {/* Mobile Sticky CTA (Solo en la landing page cuando se desplaza) */}
       {currentPage === 'landing' && (
         <StickyBottomCta 
           hotmartLink={hotmartLink} 
