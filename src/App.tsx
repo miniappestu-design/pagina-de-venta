@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { QuizAnswers } from './types';
 import { HeaderNav } from './components/HeaderNav';
 import { QuizExperience } from './components/QuizExperience';
+import { PostQuizVideoSection } from './components/PostQuizVideoSection';
 import { LandingHeroPersonalized } from './components/LandingHeroPersonalized';
 import { CreadorMiniAppsDemo } from './components/CreadorMiniAppsDemo';
 import { NutriFacilInteractiveDemo } from './components/NutriFacilInteractiveDemo';
@@ -21,7 +22,7 @@ const DEFAULT_HOTMART_LINK = 'https://pay.hotmart.com/T106939828K?checkoutMode=1
 const DEFAULT_WHATSAPP_LINK = 'https://wa.me/56932051719';
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<'quiz' | 'landing'>('quiz');
+  const [currentPage, setCurrentPage] = useState<'quiz' | 'video' | 'landing'>('quiz');
 
   const [answers, setAnswers] = useState<QuizAnswers | null>(() => {
     try {
@@ -78,14 +79,19 @@ export default function App() {
     } catch {
       // Ignore
     }
+    setCurrentPage('video');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleGoToLanding = (finalAnswers: QuizAnswers) => {
-    setAnswers(finalAnswers);
-    try {
-      localStorage.setItem('verse_quiz_answers', JSON.stringify(finalAnswers));
-    } catch {
-      // Ignore
+  const handleGoToLanding = (finalAnswers?: QuizAnswers) => {
+    const effectiveAnswers = finalAnswers || answers;
+    if (effectiveAnswers) {
+      setAnswers(effectiveAnswers);
+      try {
+        localStorage.setItem('verse_quiz_answers', JSON.stringify(effectiveAnswers));
+      } catch {
+        // Ignore
+      }
     }
     setCurrentPage('landing');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -133,16 +139,28 @@ export default function App() {
       <main className="flex-1">
         {currentPage === 'quiz' ? (
           /* ========================================================
-             PÁGINA 1: QUIZ INTERACTIVO EXCLUSIVO
+             PASO 1: QUIZ INTERACTIVO EXCLUSIVO (5 Preguntas)
              ======================================================== */
           <QuizExperience 
             onCompleteQuiz={handleCompleteQuiz}
             onGoToLanding={handleGoToLanding}
             savedAnswers={answers}
           />
+        ) : currentPage === 'video' ? (
+          /* ========================================================
+             PASO 2: VIDEO POST-QUIZ (53s) - PUENTE ESTRATÉGICO
+             "ANUNCIO → QUIZ → VIDEO → PÁGINA DE VENTA → HOTMART"
+             ======================================================== */
+          <PostQuizVideoSection 
+            answers={answers}
+            onContinueToLanding={() => handleGoToLanding(answers || undefined)}
+            onRetakeQuiz={handleGoToQuiz}
+          />
         ) : (
           /* ========================================================
-             PÁGINA 2: LANDING DE VENTA COMPLETA
+             PASO 3: PÁGINA DE VENTA COMPLETA
+             (Todos los elementos intactos: Demo, NutriFácil, Galería,
+              Ecosistema, MAPA, Bonos, Testimonios, US$27 y Checkout)
              ======================================================== */
           <div className="animate-in fade-in duration-300 pb-16 md:pb-0">
             {/* Inicio personalizado: POR LO QUE NOS CONTASTE... + EL PROBLEMA + LA NUEVA OPORTUNIDAD */}

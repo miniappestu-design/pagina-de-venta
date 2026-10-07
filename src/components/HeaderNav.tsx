@@ -2,7 +2,7 @@ import React from 'react';
 import { Sparkles, ArrowRight, RotateCcw } from 'lucide-react';
 
 interface HeaderNavProps {
-  currentPage: 'quiz' | 'landing';
+  currentPage: 'quiz' | 'video' | 'landing';
   onCtaClick: () => void;
   onGoToQuiz: () => void;
 }
@@ -37,6 +37,11 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
             <a href="#oferta" className="hover:text-cyan-300 transition-colors">Oferta</a>
             <a href="#faq" className="hover:text-cyan-300 transition-colors">Preguntas</a>
           </nav>
+        ) : currentPage === 'video' ? (
+          <div className="text-xs text-cyan-300/90 font-medium hidden sm:flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+            <span>Paso 2: Video de Revelación (53 segundos)</span>
+          </div>
         ) : (
           <div className="text-xs text-purple-300/80 font-medium hidden sm:block">
             Diagnóstico de Oportunidad con Inteligencia Artificial
@@ -63,6 +68,13 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
             >
               <span>Acceso US$27</span>
               <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          ) : currentPage === 'video' ? (
+            <button
+              onClick={onGoToQuiz}
+              className="text-xs px-2.5 py-1 rounded-full bg-purple-950/60 border border-purple-800/40 text-purple-300 hover:text-white transition-colors cursor-pointer"
+            >
+              Modificar Quiz
             </button>
           ) : (
             <div className="text-xs px-2.5 py-1 rounded-full bg-purple-950/60 border border-purple-800/40 text-purple-300 font-semibold">
