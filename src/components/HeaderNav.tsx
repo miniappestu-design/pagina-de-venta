@@ -5,12 +5,14 @@ interface HeaderNavProps {
   currentPage: 'quiz' | 'landing';
   onCtaClick: () => void;
   onGoToQuiz: () => void;
+  onGoToLanding?: () => void;
 }
 
 export const HeaderNav: React.FC<HeaderNavProps> = ({ 
   currentPage, 
   onCtaClick, 
-  onGoToQuiz 
+  onGoToQuiz,
+  onGoToLanding
 }) => {
   return (
     <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-[#090714]/90 border-b border-purple-900/30 transition-all">
@@ -66,8 +68,19 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
               </button>
             </>
           ) : (
-            <div className="text-xs px-3 py-1 rounded-full bg-purple-950/60 border border-purple-800/40 text-purple-300 font-semibold">
-              Quiz Interactivo
+            <div className="flex items-center gap-2">
+              <span className="hidden sm:inline-block text-xs px-2.5 py-1 rounded-full bg-purple-950/60 border border-purple-800/40 text-purple-300 font-semibold">
+                Quiz Interactivo
+              </span>
+              {onGoToLanding && (
+                <button
+                  onClick={onGoToLanding}
+                  className="px-3 py-1.5 text-xs font-bold rounded-lg bg-purple-900/80 hover:bg-purple-800 border border-cyan-400/50 text-cyan-300 transition-all flex items-center gap-1 cursor-pointer"
+                  title="Ver video de presentación y landing page"
+                >
+                  <span>Ver Video →</span>
+                </button>
+              )}
             </div>
           )}
         </div>

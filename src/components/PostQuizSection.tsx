@@ -8,6 +8,8 @@ import {
   Play
 } from 'lucide-react';
 import { QuizAnswers } from '../types';
+import postQuizVideo from '../assets/videos/video-post-quiz.mp4';
+import postQuizPoster from '../assets/videos/video-post-quiz-poster.jpg';
 
 interface PostQuizSectionProps {
   answers: QuizAnswers | null;
@@ -19,44 +21,53 @@ export const PostQuizSection: React.FC<PostQuizSectionProps> = ({
   onRetakeQuiz,
 }) => {
   const [isMuted, setIsMuted] = useState<boolean>(true);
-  const [isPlaying, setIsPlaying] = useState<boolean>(true);
-  const videoSrc = '/videos/video-post-quiz.mp4';
-  const posterSrc = '/videos/video-post-quiz-poster.jpg';
+  const [hasStarted, setHasStarted] = useState<boolean>(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Iniciar reproducción automática compatible con iOS (iPhone/iPad) y Android
+  const videoSrc = postQuizVideo || '/videos/video-post-quiz.mp4';
+  const posterSrc = postQuizPoster || '/videos/video-post-quiz-poster.jpg';
+
+  // Iniciar reproducción automática universal (iOS, Android, Tablet, PC)
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    // En iOS Safari / iPhone / iPad y navegadores móviles modernos,
-    // el video DEBE iniciar en silencio (muted = true) para que la política
-    // de autoplay del navegador no lo bloquee ni muestre la pantalla negra con el ícono tachado.
+    // En dispositivos móviles (iPhone, iPad, Android), los navegadores
+    // exigen muted = true y playsInline para permitir autoplay inmediato.
     video.muted = true;
     video.defaultMuted = true;
     video.playsInline = true;
 
-    const playPromise = video.play();
-    if (playPromise !== undefined) {
-      playPromise
-        .then(() => {
-          setIsPlaying(true);
-          setIsMuted(true);
-        })
-        .catch(() => {
-          // Si el modo de bajo consumo de iOS u otra restricción pausa la reproducción automática
-          setIsPlaying(false);
-        });
+    const startPlayback = () => {
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            setHasStarted(true);
+            setIsMuted(video.muted);
+          })
+          .catch(() => {
+            // Si el modo de ahorro de batería del celular requiere interacción táctil
+            setHasStarted(false);
+          });
+      }
+    };
+
+    if (video.readyState >= 2) {
+      startPlayback();
+    } else {
+      video.addEventListener('loadeddata', startPlayback, { once: true });
+      video.addEventListener('canplay', startPlayback, { once: true });
     }
   }, []);
 
-  const handleToggleSound = (e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
+  const handleToggleSound = () => {
     const video = videoRef.current;
     if (!video) return;
 
     if (video.muted) {
       video.muted = false;
+      video.volume = 1;
       setIsMuted(false);
       video.play().catch(() => {});
     } else {
@@ -65,20 +76,21 @@ export const PostQuizSection: React.FC<PostQuizSectionProps> = ({
     }
   };
 
-  const handlePlayVideo = (e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
+  const handleManualPlay = () => {
     const video = videoRef.current;
     if (!video) return;
 
+    // Desactivar silencio y reproducir mediante el gesto del usuario
     video.muted = false;
+    video.volume = 1;
     setIsMuted(false);
     video.play()
-      .then(() => setIsPlaying(true))
+      .then(() => setHasStarted(true))
       .catch(() => {
-        // En caso de que el sistema restrinja audio sin interacción previa
+        // En caso de que el navegador móvil restrinja audio en este instante
         video.muted = true;
         setIsMuted(true);
-        video.play().then(() => setIsPlaying(true)).catch(() => {});
+        video.play().then(() => setHasStarted(true)).catch(() => {});
       });
   };
 
@@ -104,7 +116,7 @@ export const PostQuizSection: React.FC<PostQuizSectionProps> = ({
         {/* ========================================================
             ENCABEZADO POST-QUIZ
             ======================================================== */}
-        <div className="text-center mb-8 w-full animate-in fade-in duration-500">
+        <div className="text-center mb-6 w-full animate-in fade-in duration-500">
           
           {/* Marca */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-950/80 border border-purple-500/40 text-cyan-300 text-xs sm:text-sm font-black tracking-widest uppercase shadow-md mb-4">
@@ -154,12 +166,40 @@ export const PostQuizSection: React.FC<PostQuizSectionProps> = ({
         </div>
 
         {/* ========================================================
+            BARRA DE ACTIVACIÓN DE AUDIO DESTACADA PARA CELULARES
+            (Ubicada fuera del video para no obstruir los toques en pantalla)
+            ======================================================== */}
+        <div className="w-full max-w-[320px] xs:max-w-[350px] sm:max-w-[390px] md:max-w-[420px] lg:max-w-[440px] mx-auto mb-3">
+          {isMuted ? (
+            <button
+              onClick={handleToggleSound}
+              type="button"
+              className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-purple-700 via-indigo-600 to-cyan-500 hover:from-purple-600 hover:to-cyan-400 text-white font-black text-xs sm:text-sm flex items-center justify-center gap-2.5 shadow-xl shadow-purple-900/60 border-2 border-cyan-300 active:scale-95 transition-all cursor-pointer animate-pulse"
+              title="Tocar para escuchar el video con audio"
+            >
+              <Volume2 className="w-5 h-5 text-cyan-200 shrink-0" />
+              <span>🔊 TOCAR PARA ACTIVAR EL AUDIO</span>
+            </button>
+          ) : (
+            <button
+              onClick={handleToggleSound}
+              type="button"
+              className="w-full py-2.5 px-4 rounded-2xl bg-emerald-950/90 border border-emerald-500/60 text-emerald-300 font-bold text-xs flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all cursor-pointer"
+              title="Audio activado. Tocar para silenciar"
+            >
+              <VolumeX className="w-4 h-4 text-emerald-400 shrink-0" />
+              <span>✓ AUDIO ACTIVADO (Tocar para silenciar)</span>
+            </button>
+          )}
+        </div>
+
+        {/* ========================================================
             REPRODUCTOR DE VIDEO REAL (HTML5 NATIVO, VERTICAL 576×1024)
-            Compatible con iPhone, iPad, Android y Computador (Responsive)
-            Con soporte nativo para WebKit / iOS Safari Autoplay y Audio
+            Compatible con Celulares (iOS y Android), Tablets y Computadoras
+            Optimizado con formato H.264 Universal FastStart
             ======================================================== */}
         <div className="w-full max-w-[320px] xs:max-w-[350px] sm:max-w-[390px] md:max-w-[420px] lg:max-w-[440px] mx-auto rounded-3xl p-[2px] bg-gradient-to-b from-purple-500/50 via-purple-900/30 to-cyan-500/40 shadow-2xl shadow-purple-950/90 relative">
-          <div className="w-full bg-black rounded-[22px] overflow-hidden flex flex-col relative group">
+          <div className="w-full bg-black rounded-[22px] overflow-hidden flex flex-col relative">
             
             <video
               ref={videoRef}
@@ -171,11 +211,9 @@ export const PostQuizSection: React.FC<PostQuizSectionProps> = ({
               x5-playsinline="true"
               preload="auto"
               poster={posterSrc}
-              src={videoSrc}
-              onPlay={() => setIsPlaying(true)}
-              onPause={() => setIsPlaying(false)}
+              onPlay={() => setHasStarted(true)}
               onVolumeChange={(e) => setIsMuted((e.currentTarget as HTMLVideoElement).muted)}
-              className="w-full h-auto block bg-black rounded-[22px]"
+              className="w-full h-auto block rounded-[22px]"
               style={{
                 aspectRatio: '576 / 1024',
                 width: '100%',
@@ -184,48 +222,29 @@ export const PostQuizSection: React.FC<PostQuizSectionProps> = ({
                 display: 'block',
               }}
             >
-              <source
-                src={videoSrc}
-                type="video/mp4"
-              />
+              <source src={postQuizVideo} type="video/mp4" />
+              <source src="/videos/video-post-quiz.mp4" type="video/mp4" />
               Tu navegador no soporta la reproducción de video HTML5.
             </video>
 
-            {/* BOTÓN FLOTANTE PARA ACTIVAR SONIDO EN IPHONE / ANDROID */}
-            {isMuted && isPlaying && (
-              <button
-                onClick={handleToggleSound}
-                className="absolute top-4 left-1/2 -translate-x-1/2 z-30 px-4 py-2 sm:px-5 sm:py-2.5 bg-gradient-to-r from-purple-700 via-indigo-600 to-cyan-500 hover:from-purple-600 hover:to-cyan-400 text-white rounded-full text-xs sm:text-sm font-black flex items-center gap-2 shadow-2xl border-2 border-cyan-300 backdrop-blur-md cursor-pointer animate-bounce transition-all active:scale-95"
-                title="Tocar para escuchar el video con audio"
+            {/* BOTÓN TRANSPARENTE SI EL NAVEGADOR ESPERA EL PRIMER TOQUE TÁCTIL */}
+            {!hasStarted && (
+              <button 
+                onClick={handleManualPlay}
+                type="button"
+                className="absolute inset-0 z-10 flex items-center justify-center bg-transparent cursor-pointer group"
+                title="Tocar para reproducir video"
               >
-                <Volume2 className="w-4 h-4 text-white animate-pulse" />
-                <span className="tracking-wide">TOCA PARA ACTIVAR AUDIO 🔊</span>
-              </button>
-            )}
-
-            {/* BOTÓN DE REPRODUCIR SI EL NAVEGADOR ESTÁ PAUSADO */}
-            {!isPlaying && (
-              <button
-                onClick={handlePlayVideo}
-                className="absolute inset-0 z-20 flex items-center justify-center bg-black/40 hover:bg-black/30 backdrop-blur-[2px] transition-all cursor-pointer group"
-                title="Reproducir video"
-              >
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-tr from-purple-600 to-cyan-400 p-[3px] shadow-2xl shadow-purple-900/90 group-hover:scale-110 active:scale-95 transition-transform flex items-center justify-center">
-                  <div className="w-full h-full bg-[#0d0a1d] rounded-full flex items-center justify-center">
-                    <Play className="w-8 h-8 sm:w-10 sm:h-10 text-cyan-300 fill-cyan-300 ml-1" />
+                <div className="flex flex-col items-center gap-2.5 drop-shadow-2xl">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-tr from-purple-600 via-indigo-600 to-cyan-400 p-[3px] shadow-2xl shadow-cyan-500/50 group-hover:scale-105 active:scale-95 transition-transform flex items-center justify-center animate-pulse">
+                    <div className="w-full h-full bg-[#0d0a1d]/85 rounded-full flex items-center justify-center backdrop-blur-sm">
+                      <Play className="w-8 h-8 sm:w-10 sm:h-10 text-cyan-300 fill-cyan-300 ml-1" />
+                    </div>
                   </div>
+                  <span className="px-3.5 py-1.5 rounded-full bg-black/80 border border-cyan-400/60 text-cyan-200 font-bold text-xs uppercase tracking-wider backdrop-blur-md shadow-lg">
+                    Tocar para reproducir
+                  </span>
                 </div>
-              </button>
-            )}
-
-            {/* BOTÓN DISCRETO EN LA ESQUINA PARA SILENCIAR/ACTIVAR SI YA ESTÁ CON AUDIO */}
-            {!isMuted && isPlaying && (
-              <button
-                onClick={handleToggleSound}
-                className="absolute top-4 right-4 z-20 p-2.5 bg-black/70 hover:bg-black/90 text-white rounded-full text-xs flex items-center justify-center border border-purple-500/50 backdrop-blur-md cursor-pointer transition-all"
-                title="Silenciar video"
-              >
-                <VolumeX className="w-4 h-4 text-slate-300" />
               </button>
             )}
           </div>

@@ -136,6 +136,7 @@ export default function App() {
         currentPage={currentPage}
         onCtaClick={handleScrollToOffer}
         onGoToQuiz={handleGoToQuiz}
+        onGoToLanding={() => handleGoToLanding()}
       />
 
       <main className="flex-1">

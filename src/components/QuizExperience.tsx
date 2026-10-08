@@ -231,13 +231,22 @@ export const QuizExperience: React.FC<QuizExperienceProps> = ({
             </div>
           </div>
 
-          <button
-            onClick={() => setStarted(true)}
-            className="w-full sm:w-auto px-10 py-4 text-lg font-bold rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 text-white shadow-xl shadow-purple-700/40 active:scale-[0.98] transition-all inline-flex items-center justify-center gap-3 cursor-pointer group mx-auto"
-          >
-            <span>🚀 COMENZAR</span>
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </button>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 mb-2">
+            <button
+              onClick={() => setStarted(true)}
+              className="w-full sm:w-auto px-8 py-4 text-base sm:text-lg font-bold rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 text-white shadow-xl shadow-purple-700/40 active:scale-[0.98] transition-all inline-flex items-center justify-center gap-3 cursor-pointer group"
+            >
+              <span>🚀 COMENZAR DIAGNÓSTICO</span>
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </button>
+
+            <button
+              onClick={() => onGoToLanding(answers)}
+              className="w-full sm:w-auto px-6 py-4 text-sm sm:text-base font-bold rounded-2xl bg-purple-950/80 hover:bg-purple-900 border border-purple-500/50 hover:border-cyan-400 text-cyan-300 shadow-lg active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <span>▶ VER VIDEO Y PRESENTACIÓN</span>
+            </button>
+          </div>
 
           <p className="text-xs text-slate-500 mt-4">
             Totalmente interactivo · Toma menos de 60 segundos
