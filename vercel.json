@@ -3,7 +3,7 @@
   "installCommand": "npm install --legacy-peer-deps",
   "headers": [
     {
-      "source": "/videos/(.*)",
+      "source": "/videos/(.*\\.mp4)",
       "headers": [
         {
           "key": "Content-Type",

@@ -3,8 +3,9 @@ import {
   Sparkles,
   RotateCcw,
   ChevronDown,
+  Volume2,
   VolumeX,
-  Volume2
+  Play
 } from 'lucide-react';
 import { QuizAnswers } from '../types';
 
@@ -17,43 +18,68 @@ export const PostQuizSection: React.FC<PostQuizSectionProps> = ({
   answers,
   onRetakeQuiz,
 }) => {
-  const [isMuted, setIsMuted] = useState<boolean>(false);
+  const [isMuted, setIsMuted] = useState<boolean>(true);
+  const [isPlaying, setIsPlaying] = useState<boolean>(true);
+  const videoSrc = '/videos/video-post-quiz.mp4';
+  const posterSrc = '/videos/video-post-quiz-poster.jpg';
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Iniciar reproducción automática
+  // Iniciar reproducción automática compatible con iOS (iPhone/iPad) y Android
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    // Intentar reproducir con audio
-    video.muted = false;
-    const playPromise = video.play();
+    // En iOS Safari / iPhone / iPad y navegadores móviles modernos,
+    // el video DEBE iniciar en silencio (muted = true) para que la política
+    // de autoplay del navegador no lo bloquee ni muestre la pantalla negra con el ícono tachado.
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
 
+    const playPromise = video.play();
     if (playPromise !== undefined) {
       playPromise
         .then(() => {
-          setIsMuted(false);
+          setIsPlaying(true);
+          setIsMuted(true);
         })
         .catch(() => {
-          // Si las restricciones de autoplay del navegador requieren silencio para iniciar
-          video.muted = true;
-          setIsMuted(true);
-          video.play().catch(() => {});
+          // Si el modo de bajo consumo de iOS u otra restricción pausa la reproducción automática
+          setIsPlaying(false);
         });
     }
   }, []);
 
-  const toggleSound = () => {
+  const handleToggleSound = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
     const video = videoRef.current;
     if (!video) return;
 
     if (video.muted) {
       video.muted = false;
       setIsMuted(false);
+      video.play().catch(() => {});
     } else {
       video.muted = true;
       setIsMuted(true);
     }
+  };
+
+  const handlePlayVideo = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.muted = false;
+    setIsMuted(false);
+    video.play()
+      .then(() => setIsPlaying(true))
+      .catch(() => {
+        // En caso de que el sistema restrinja audio sin interacción previa
+        video.muted = true;
+        setIsMuted(true);
+        video.play().then(() => setIsPlaying(true)).catch(() => {});
+      });
   };
 
   const detectedStartingPoint = answers?.q1 || null;
@@ -129,47 +155,86 @@ export const PostQuizSection: React.FC<PostQuizSectionProps> = ({
 
         {/* ========================================================
             REPRODUCTOR DE VIDEO REAL (HTML5 NATIVO, VERTICAL 576×1024)
-            Directo, sin botón de subir, sin overlays tapando el video
+            Compatible con iPhone, iPad, Android y Computador (Responsive)
+            Con soporte nativo para WebKit / iOS Safari Autoplay y Audio
             ======================================================== */}
-        <div className="w-full max-w-[360px] sm:max-w-[400px] md:max-w-[420px] mx-auto rounded-3xl p-[2px] bg-gradient-to-b from-purple-500/50 via-purple-900/30 to-cyan-500/40 shadow-2xl shadow-purple-950/90 relative">
+        <div className="w-full max-w-[320px] xs:max-w-[350px] sm:max-w-[390px] md:max-w-[420px] lg:max-w-[440px] mx-auto rounded-3xl p-[2px] bg-gradient-to-b from-purple-500/50 via-purple-900/30 to-cyan-500/40 shadow-2xl shadow-purple-950/90 relative">
           <div className="w-full bg-black rounded-[22px] overflow-hidden flex flex-col relative group">
+            
             <video
               ref={videoRef}
               controls
               autoPlay
+              muted
               playsInline
+              webkit-playsinline="true"
+              x5-playsinline="true"
               preload="auto"
-              src="/videos/video-post-quiz.mp4"
+              poster={posterSrc}
+              src={videoSrc}
+              onPlay={() => setIsPlaying(true)}
+              onPause={() => setIsPlaying(false)}
+              onVolumeChange={(e) => setIsMuted((e.currentTarget as HTMLVideoElement).muted)}
               className="w-full h-auto block bg-black rounded-[22px]"
               style={{
                 aspectRatio: '576 / 1024',
-                maxWidth: '100%',
+                width: '100%',
+                maxHeight: '75vh',
+                objectFit: 'contain',
                 display: 'block',
               }}
             >
               <source
-                src="/videos/video-post-quiz.mp4"
+                src={videoSrc}
                 type="video/mp4"
               />
               Tu navegador no soporta la reproducción de video HTML5.
             </video>
 
-            {/* Indicador interactivo si el navegador inició en silencio por política de autoplay */}
-            {isMuted && (
+            {/* BOTÓN FLOTANTE PARA ACTIVAR SONIDO EN IPHONE / ANDROID */}
+            {isMuted && isPlaying && (
               <button
-                onClick={toggleSound}
-                className="absolute top-4 right-4 z-20 px-3.5 py-2 bg-black/80 hover:bg-black text-white rounded-full text-xs font-bold flex items-center gap-2 shadow-2xl border border-cyan-400/60 backdrop-blur-md cursor-pointer animate-pulse transition-all"
-                title="Activar sonido"
+                onClick={handleToggleSound}
+                className="absolute top-4 left-1/2 -translate-x-1/2 z-30 px-4 py-2 sm:px-5 sm:py-2.5 bg-gradient-to-r from-purple-700 via-indigo-600 to-cyan-500 hover:from-purple-600 hover:to-cyan-400 text-white rounded-full text-xs sm:text-sm font-black flex items-center gap-2 shadow-2xl border-2 border-cyan-300 backdrop-blur-md cursor-pointer animate-bounce transition-all active:scale-95"
+                title="Tocar para escuchar el video con audio"
               >
-                <VolumeX className="w-4 h-4 text-cyan-300" />
-                <span>Activar sonido</span>
+                <Volume2 className="w-4 h-4 text-white animate-pulse" />
+                <span className="tracking-wide">TOCA PARA ACTIVAR AUDIO 🔊</span>
+              </button>
+            )}
+
+            {/* BOTÓN DE REPRODUCIR SI EL NAVEGADOR ESTÁ PAUSADO */}
+            {!isPlaying && (
+              <button
+                onClick={handlePlayVideo}
+                className="absolute inset-0 z-20 flex items-center justify-center bg-black/40 hover:bg-black/30 backdrop-blur-[2px] transition-all cursor-pointer group"
+                title="Reproducir video"
+              >
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-tr from-purple-600 to-cyan-400 p-[3px] shadow-2xl shadow-purple-900/90 group-hover:scale-110 active:scale-95 transition-transform flex items-center justify-center">
+                  <div className="w-full h-full bg-[#0d0a1d] rounded-full flex items-center justify-center">
+                    <Play className="w-8 h-8 sm:w-10 sm:h-10 text-cyan-300 fill-cyan-300 ml-1" />
+                  </div>
+                </div>
+              </button>
+            )}
+
+            {/* BOTÓN DISCRETO EN LA ESQUINA PARA SILENCIAR/ACTIVAR SI YA ESTÁ CON AUDIO */}
+            {!isMuted && isPlaying && (
+              <button
+                onClick={handleToggleSound}
+                className="absolute top-4 right-4 z-20 p-2.5 bg-black/70 hover:bg-black/90 text-white rounded-full text-xs flex items-center justify-center border border-purple-500/50 backdrop-blur-md cursor-pointer transition-all"
+                title="Silenciar video"
+              >
+                <VolumeX className="w-4 h-4 text-slate-300" />
               </button>
             )}
           </div>
         </div>
 
-        {/* Continuación natural hacia la Landing de Venta */}
-        <div className="mt-10 flex flex-col items-center justify-center text-center">
+        {/* ========================================================
+            CONTINUACIÓN NATURAL HACIA LA LANDING DE VENTA
+            ======================================================== */}
+        <div className="mt-8 sm:mt-10 flex flex-col items-center justify-center text-center">
           <button
             onClick={scrollToLandingContent}
             className="group flex flex-col items-center gap-2 text-slate-400 hover:text-cyan-300 transition-colors cursor-pointer"
