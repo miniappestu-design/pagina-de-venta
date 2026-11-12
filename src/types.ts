@@ -34,6 +34,16 @@ export interface MiniAppExample {
   metricsOrHighlight: string;
 }
 
+export interface CourseModuleItem {
+  number: number;
+  badge: string;
+  title: string;
+  description: string;
+  tag: string;
+  hotmartUrl?: string;
+  lessons?: string[];
+}
+
 export interface BonusItem {
   number: number;
   badge: string;

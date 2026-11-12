@@ -1,4 +1,85 @@
-import { MiniAppExample, BonusItem, Testimonial, FaqItem } from '../types';
+import { MiniAppExample, CourseModuleItem, BonusItem, Testimonial, FaqItem } from '../types';
+
+export const COURSE_MODULES: CourseModuleItem[] = [
+  {
+    number: 1,
+    badge: 'MÓDULO 1',
+    tag: 'FUNDAMENTOS',
+    title: 'Fundamentos de las MiniApps y Mentalidad del Creador',
+    description: 'Comprende el poder de las aplicaciones interactivas en navegador móvil sin descargas y cómo transformar conocimientos en productos digitales de alto impacto.',
+    hotmartUrl: 'https://pay.hotmart.com/T106939828K?checkoutMode=10',
+    lessons: [
+      'Qué es una MiniApp y por qué supera a los PDFs estáticos',
+      'El modelo mental para conceptualizar experiencias interactivas',
+      'Configuración de herramientas y entorno de trabajo sin programar',
+    ],
+  },
+  {
+    number: 2,
+    badge: 'MÓDULO 2',
+    tag: 'FASE MAPEAR',
+    title: 'Mapear Oportunidades y Nichos de Alta Demanda',
+    description: 'Aprende a detectar problemas cotidianos, deseos primarios y fricciones en personas o negocios que pueden resolverse con herramientas móviles en 3 toques.',
+    hotmartUrl: 'https://pay.hotmart.com/T106939828K?checkoutMode=10',
+    lessons: [
+      'Investigación de mercados desatendidos con alta intención de uso',
+      'Validación ágil de la necesidad antes de construir',
+      'Definición de la oferta interactiva y del usuario ideal',
+    ],
+  },
+  {
+    number: 3,
+    badge: 'MÓDULO 3',
+    tag: 'FASE ARQUITECTAR',
+    title: 'Arquitectura y Diseño de Experiencias Interactivas',
+    description: 'Estructura paso a paso las pantallas, campos, selectores, botones y respuestas interactivas optimizadas para la pantalla de cualquier celular.',
+    hotmartUrl: 'https://pay.hotmart.com/T106939828K?checkoutMode=10',
+    lessons: [
+      'Diseño del flujo principal en 3 o 4 pantallas clave',
+      'Jerarquía visual, usabilidad móvil y elementos de enganche',
+      'Estructuración lógica de calculadoras, diagnósticos y guías',
+    ],
+  },
+  {
+    number: 4,
+    badge: 'MÓDULO 4',
+    tag: 'FASE PUBLICAR',
+    title: 'Creación y Publicación de tu MiniApp con Inteligencia Artificial',
+    description: 'Conéctate con la IA para generar interfaces funcionales en tiempo real utilizando la Fábrica de Prompts Verse sin escribir código tradicional.',
+    hotmartUrl: 'https://pay.hotmart.com/T106939828K?checkoutMode=10',
+    lessons: [
+      'Uso de prompts estructurados para generar interfaces funcionales',
+      'Pruebas y refinamiento en tiempo real directamente en tu celular',
+      'Publicación y generación del enlace oficial accesible en la web',
+    ],
+  },
+  {
+    number: 5,
+    badge: 'MÓDULO 5',
+    tag: 'FASE ATRAER & ECOSISTEMA',
+    title: 'Ecosistema Verse, Biblioteca de 180 MiniApps y Monetización',
+    description: 'Aprende a entregar tu MiniApp a clientes, implementarla en negocios locales o venderla como infoproducto o servicio interactivo de alto valor.',
+    hotmartUrl: 'https://pay.hotmart.com/T106939828K?checkoutMode=10',
+    lessons: [
+      'Estrategias de entrega directa a través de enlaces simples y QR',
+      'Personalización rápida de las 180 MiniApps de la biblioteca',
+      'Modelos de monetización: venta directa, suscripción o servicio B2B',
+    ],
+  },
+  {
+    number: 6,
+    badge: 'MÓDULO 6',
+    tag: 'TRÁFICO & VENTAS',
+    title: 'APRENDE A CREAR TUS PRIMERAS CAMPAÑAS CON FACEBOOK META',
+    description: 'Aprende paso a paso cómo crear tus primeras campañas utilizando Facebook Meta para promocionar tus MiniApps y llegar a nuevas personas.',
+    hotmartUrl: 'https://pay.hotmart.com/T106939828K?checkoutMode=10',
+    lessons: [
+      'Configuración del Administrador de Anuncios de Meta Ads paso a paso',
+      'Estructura de campañas, conjuntos de anuncios y creativos ganadores',
+      'Segmentación estratégica y ganchos de alta conversión para atraer usuarios',
+    ],
+  },
+];
 
 export const MINIAPP_EXAMPLES: MiniAppExample[] = [
   {

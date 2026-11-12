@@ -36,6 +36,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
             <a href="#creador-demo" className="hover:text-cyan-300 transition-colors">Creador Demo</a>
             <a href="#demostracion" className="hover:text-cyan-300 transition-colors">NutriFácil</a>
             <a href="#metodo-mapa" className="hover:text-cyan-300 transition-colors">Método M.A.P.A.</a>
+            <a href="#modulos" className="hover:text-cyan-300 transition-colors">Módulos</a>
             <a href="#bonos" className="hover:text-cyan-300 transition-colors">Bonos</a>
             <a href="#oferta" className="hover:text-cyan-300 transition-colors">Oferta</a>
             <a href="#faq" className="hover:text-cyan-300 transition-colors">Preguntas</a>

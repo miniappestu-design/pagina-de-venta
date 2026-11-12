@@ -10,6 +10,7 @@ import { MiniAppsGallery } from './components/MiniAppsGallery';
 import { PossibilitiesGrid } from './components/PossibilitiesGrid';
 import { VerseEcosystem } from './components/VerseEcosystem';
 import { MapaMethod } from './components/MapaMethod';
+import { CourseModulesSection } from './components/CourseModulesSection';
 import { BonusesSection } from './components/BonusesSection';
 import { RealWhatsAppTestimonials } from './components/RealWhatsAppTestimonials';
 import { ObjectionsSection } from './components/ObjectionsSection';
@@ -195,6 +196,11 @@ export default function App() {
             <MapaMethod 
               hotmartLink={hotmartLink}
               whatsappLink={whatsappLink}
+            />
+
+            {/* SECCIÓN: MÓDULOS DEL CURSO (Módulos 1 al 6 con Módulo 6: Campañas con Facebook Meta) */}
+            <CourseModulesSection 
+              hotmartLink={hotmartLink}
             />
 
             {/* SECCIÓN: LOS 4 BONOS ESPECIALES & BIBLIOTECA 180 MINIAPPS */}

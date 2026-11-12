@@ -42,6 +42,7 @@ export const OfferSection: React.FC<OfferSectionProps> = ({
     'Fábrica de Prompts Verse',
     '4 bonos especiales',
     'Biblioteca de 180 MiniApps Verse',
+    'Módulo 6: Primeras campañas con Facebook Meta',
   ];
 
   return (
